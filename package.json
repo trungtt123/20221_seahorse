@@ -1,0 +1,35 @@
+{
+  "name": "seahorse",
+  "version": "1.0.0",
+  "description": "game ca ngua",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "start": "pm2 start server.js --watch"
+  },
+  "author": "quang trung",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "body-parser": "^1.20.0",
+    "cheerio": "^1.0.0-rc.3",
+    "clipboardy": "^3.0.0",
+    "copy-image-clipboard": "^2.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "img-clipboard": "^1.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.7.2",
+    "node-clipboardy": "^1.0.3",
+    "node-fetch": "^3.2.10",
+    "puppeteer": "^17.1.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "socket.io": "^4.5.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
