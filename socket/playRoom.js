@@ -10,8 +10,8 @@ module.exports = function (socket) {
             let res = await roomService.solve(socket, player.roomId);
             if (res.message === 'success') {
                 _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, res);
+                await helpers.delay(1000);
                 // xử lý trường hợp quay xong không có lượt đi
-                await helpers.delay(3000);
                 if (res.room.dataBoard.cases.length === 0) {
                     let resNoPath = await roomService.selectPath(socket, player.roomId, null);
                     console.log('resNoPath', resNoPath.room.dataBoard.currentTurn);
@@ -23,22 +23,24 @@ module.exports = function (socket) {
                         // xử lý trường hợp máy quay ra 6
                         while (1) {
                             let machineRes = await roomService.solve(null, player.roomId);
-
+                            await helpers.delay(1000);
                             _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, machineRes);
                             // máy random nước đi
                             if (machineRes.message === 'success') {
-                                await helpers.delay(3000);
+                                await helpers.delay(1000);
                                 const { cases, dice } = machineRes.room.dataBoard;
                                 if (cases.length === 0) {
                                     let newRes = await roomService.selectPath(null, player.roomId, null);
                                     _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, newRes);
+                                    if (newRes.room.dataBoard.currentTurn.socketId !== null) break;
                                 }
                                 else {
                                     let r = helpers.random(0, cases.length - 1);
                                     let newRes = await roomService.selectPath(null, player.roomId, r);
                                     _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, newRes);
+                                    if (newRes.room.dataBoard.currentTurn.socketId !== null) break;
                                 }
-                                if (dice !== 6) break;
+                                
                             }
                             else {
                                 // player là máy bị đơ
@@ -66,22 +68,24 @@ module.exports = function (socket) {
                 // xử lý trường hợp máy quay ra 6
                 while (1) {
                     let machineRes = await roomService.solve(null, player.roomId);
-
+                    await helpers.delay(1000);
                     _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, machineRes);
                     // máy random nước đi
                     if (machineRes.message === 'success') {
-                        await helpers.delay(3000);
+                        await helpers.delay(1000);
                         const { cases, dice } = machineRes.room.dataBoard;
                         if (cases.length === 0) {
                             let newRes = await roomService.selectPath(null, player.roomId, null);
                             _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, newRes);
+                            if (newRes.room.dataBoard.currentTurn.socketId !== null) break;
                         }
                         else {
                             let r = helpers.random(0, cases.length - 1);
                             let newRes = await roomService.selectPath(null, player.roomId, r);
                             _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, newRes);
+                            if (newRes.room.dataBoard.currentTurn.socketId !== null) break;
                         }
-                        if (dice !== 6) break;
+                        
                     }
                     else {
                         // player là máy bị đơ

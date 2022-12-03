@@ -6,6 +6,11 @@ const STATUS_OUT = 'out';
 const STATUS_RUNNING = 'running';
 const STATUS_DOOR = 'door';
 const STATUS_INSTABLE = 'instable';
+const RED_START = 1;
+const BLUE_START = 15;
+const GREEN_START = 29;
+const YELLOW_START = 43;
+
 const RED_DOOR = 0;
 const BLUE_DOOR = 14;
 const GREEN_DOOR = 28;
@@ -65,6 +70,10 @@ module.exports = {
     STATUS_RUNNING,
     STATUS_DOOR,
     STATUS_INSTABLE,
+    RED_START,
+    BLUE_START,
+    GREEN_START,
+    YELLOW_START,
     RED_DOOR,
     BLUE_DOOR,
     GREEN_DOOR,

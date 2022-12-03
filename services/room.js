@@ -33,15 +33,15 @@ function updateDataBoard(data, pathIndex, players) {
     //console.log('target', target);
     // trường hợp xuất quân
     if (source.status === cst.STATUS_OUT && target.status === cst.STATUS_RUNNING) {
-        let door = cst.RED_DOOR; // currentTurn = RED
+        let door = cst.RED_START; // currentTurn = RED
         if (currentTurn.color === cst.BLUE) {
-            door = cst.BLUE_DOOR;
+            door = cst.BLUE_START;
         }
         else if (currentTurn.color === cst.GREEN) {
-            door = cst.GREEN_DOOR;
+            door = cst.GREEN_START;
         }
         else if (currentTurn.color === cst.YELLOW) {
-            door = cst.YELLOW_DOOR;
+            door = cst.YELLOW_START;
         }
         // trường hợp xuất quân mà không có quân địch nào cản
         if (mainRoad[door] === null) {
@@ -218,80 +218,64 @@ function getNextTurn(dice, currentTurn, players) {
         color: null,
         socketId: null
     }
+    const bluePlayer = players.find(o => o.isBlocked === false && o.color === cst.BLUE);
+    const greenPlayer = players.find(o => o.isBlocked === false && o.color === cst.GREEN);
+    const yellowPlayer = players.find(o => o.isBlocked === false && o.color === cst.YELLOW);
+    const redPlayer = players.find(o => o.isBlocked === false && o.color === cst.RED);
     if (currentTurn.color === cst.RED) {
-        for (let i = 0; i < 4; i++) {
-            if (players[i].color === cst.BLUE) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.GREEN) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.YELLOW) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
+        if (bluePlayer !== undefined) {
+            data.color = bluePlayer.color,
+            data.socketId = bluePlayer.socketId
+        }
+        else if (greenPlayer !== undefined) {
+            data.color = greenPlayer.color,
+            data.socketId = greenPlayer.socketId
+        }
+        else if (yellowPlayer !== undefined) {
+            data.color = yellowPlayer.color,
+            data.socketId = yellowPlayer.socketId
         }
     }
     else if (currentTurn.color === cst.BLUE) {
-        for (let i = 0; i < 4; i++) {
-            if (players[i].color === cst.GREEN) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.YELLOW) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.RED) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
+        if (greenPlayer !== undefined) {
+            data.color = greenPlayer.color,
+            data.socketId = greenPlayer.socketId
+        }
+        else if (yellowPlayer !== undefined) {
+            data.color = yellowPlayer.color,
+            data.socketId = yellowPlayer.socketId
+        }
+        else if (redPlayer !== undefined) {
+            data.color = redPlayer.color,
+            data.socketId = redPlayer.socketId
         }
     }
     else if (currentTurn.color === cst.GREEN) {
-        for (let i = 0; i < 4; i++) {
-            if (players[i].color === cst.YELLOW) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.RED) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.BLUE) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
+        if (yellowPlayer !== undefined) {
+            data.color = yellowPlayer.color,
+            data.socketId = yellowPlayer.socketId
+        }
+        else if (redPlayer !== undefined) {
+            data.color = redPlayer.color,
+            data.socketId = redPlayer.socketId
+        }
+        else if (bluePlayer !== undefined) {
+            data.color = bluePlayer.color,
+            data.socketId = bluePlayer.socketId
         }
     }
     else if (currentTurn.color === cst.YELLOW) {
-        for (let i = 0; i < 4; i++) {
-            if (players[i].color === cst.RED) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.BLUE) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
-            else if (players[i].color === cst.GREEN) {
-                data.color = players[i].color;
-                data.socketId = players[i].socketId;
-                break;
-            }
+        if (redPlayer !== undefined) {
+            data.color = redPlayer.color,
+            data.socketId = redPlayer.socketId
+        }
+        else if (bluePlayer !== undefined) {
+            data.color = bluePlayer.color,
+            data.socketId = bluePlayer.socketId
+        }
+        else if (greenPlayer !== undefined) {
+            data.color = greenPlayer.color,
+            data.socketId = greenPlayer.socketId
         }
     }
     return data;
@@ -304,48 +288,48 @@ function xulyTruongHopXuatQuan(data) {
     } = data;
     let res = [];
     for (let i = 0; i < 4; i++) {
-        if (currentTurn.color === cst.RED && mainRoad[0]?.color !== cst.RED && meadow[cst.RED][i] !== null)
+        if (currentTurn.color === cst.RED && mainRoad[1]?.color !== cst.RED && meadow[cst.RED][i] !== null)
             res.push(
                 {
                     source: meadow[cst.RED][i],
                     target: {
-                        position: 0,
+                        position: 1,
                         status: cst.STATUS_RUNNING,
                         index: i + 1,
                         color: currentTurn.color
                     }
                 }
             );
-        if (currentTurn.color === cst.BLUE && mainRoad[14]?.color !== cst.BLUE && meadow[cst.BLUE][i] !== null)
+        if (currentTurn.color === cst.BLUE && mainRoad[15]?.color !== cst.BLUE && meadow[cst.BLUE][i] !== null)
             res.push(
                 {
                     source: meadow[cst.BLUE][i],
                     target: {
-                        position: 14,
+                        position: 15,
                         status: cst.STATUS_RUNNING,
                         index: i + 1,
                         color: currentTurn.color
                     }
                 }
             );
-        if (currentTurn.color === cst.GREEN && mainRoad[28]?.color !== cst.GREEN && meadow[cst.GREEN][i] !== null)
+        if (currentTurn.color === cst.GREEN && mainRoad[29]?.color !== cst.GREEN && meadow[cst.GREEN][i] !== null)
             res.push(
                 {
                     source: meadow[cst.GREEN][i],
                     target: {
-                        position: 28,
+                        position: 29,
                         status: cst.STATUS_RUNNING,
                         index: i + 1,
                         color: currentTurn.color
                     }
                 }
             );
-        if (currentTurn.color === cst.YELLOW && mainRoad[42]?.color !== cst.YELLOW && meadow[cst.YELLOW][i] !== null)
+        if (currentTurn.color === cst.YELLOW && mainRoad[43]?.color !== cst.YELLOW && meadow[cst.YELLOW][i] !== null)
             res.push(
                 {
                     source: meadow[cst.YELLOW][i],
                     target: {
-                        position: 42,
+                        position: 43,
                         status: cst.STATUS_RUNNING,
                         index: i + 1,
                         color: currentTurn.color
@@ -456,7 +440,8 @@ function xulyTruongHopDiChuyen(data, dice) {
                         target: {
                             position: 42,
                             status: cst.STATUS_RUNNING,
-                            index: seahorse?.index
+                            index: seahorse?.index,
+                            color: currentTurn
                         }
                     }
                 );
