@@ -41,14 +41,21 @@ const CLIENT_LEAVE_WAIT_ROOM_AFTER_KICKED = 'client leave wait room after kicked
 const ROOM_OWNER_BLOCK_PLAYER = 'room owner block player';
 const ROOM_OWNER_UNLOCK_PLAYER = 'room owner unlock player';
 const ROOM_OWNER_KICK_PLAYER = 'room owner kick player';
-const ROOM_OWNER_CHANGE_TYPE_PLAYER = 'room owner change type player'
+const ROOM_OWNER_CHANGE_TYPE_PLAYER = 'room owner change type player';
+const CLIENT_START_GAME = 'client start game';
 //room
 const WAIT_ROOM_SEND_DATA = 'wait room send data';
 const WAIT_ROOM_SEND_PLAYER_KICK = 'wait room send player kick';
-const SERVER_TO_CLIENT_LEAVE_WAIT_ROOM = 'server to client leave wait room'
-
-
+const SERVER_TO_CLIENT_LEAVE_WAIT_ROOM = 'server to client leave wait room';
+const SERVER_START_GAME = 'server start game';
 const CLIENT_JOIN_PLAY_ROOM = 'client join play room';
+/*socket in play room*/
+//client
+const CLIENT_SPIN = 'client spin';
+const CLIENT_SELECT_PATH = 'client select path';
+//server
+const PLAY_ROOM_SEND_DATA = 'play room send data';
+
 module.exports = {
     RED,
     BLUE,
@@ -86,5 +93,10 @@ module.exports = {
     WAIT_ROOM_SEND_PLAYER_KICK,
     ROOM_OWNER_CHANGE_TYPE_PLAYER,
     CLIENT_LEAVE_WAIT_ROOM_AFTER_KICKED,
-    SERVER_SEND_NUMBER_OF_PLAYERS
+    SERVER_SEND_NUMBER_OF_PLAYERS,
+    CLIENT_START_GAME,
+    SERVER_START_GAME,
+    CLIENT_SPIN,
+    PLAY_ROOM_SEND_DATA,
+    CLIENT_SELECT_PATH
 }

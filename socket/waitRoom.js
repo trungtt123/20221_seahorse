@@ -1,6 +1,7 @@
 const roomService = require('../services/room');
 const playerService = require('../services/player');
 const constant = require('../utils/constant');
+const helpers = require('../utils/helpers');
 module.exports = function (socket) {
     setInterval(async () => {
         let res = await roomService.getListRoom();
@@ -22,7 +23,11 @@ module.exports = function (socket) {
         await playerService.remove(socket.id);
     });
     socket.on(constant.CLIENT_REGISTER, async (data) => {
-        let res = await playerService.register(data);
+        const d = {
+            username: data.username,
+            socketId: socket.id
+        }
+        let res = await playerService.register(d);
         socket.emit(constant.SERVER_CREATE_USER, res);
     });
 
@@ -45,7 +50,7 @@ module.exports = function (socket) {
         if (dataPlayer.message === 'success') {
             let res = await roomService.joinWaitRoom(room._id, dataPlayer.player);
             if (res.message === 'success') {
-                console.log('join room', room._id);
+                //console.log('join room', room._id);
                 socket.join(room._id);
                 // thông báo cho cả phòng khi người chơi vào đc phòng
                 _io.in(room._id).emit(constant.WAIT_ROOM_SEND_DATA, res);
@@ -65,7 +70,7 @@ module.exports = function (socket) {
         if (dataPlayer.message === 'success') {
             const { player } = dataPlayer
             let res = await roomService.leaveWaitRoom(player);
-            console.log('player leave room', player);
+            //console.log('player leave room', player);
             if (res.message === 'success') {
                 socket.leave(player.roomId);
                 // thông báo cho cả phòng khi người dùng rời phòng thành công
@@ -85,16 +90,18 @@ module.exports = function (socket) {
     });
     socket.on(constant.ROOM_OWNER_BLOCK_PLAYER, async (data) => {
         const { roomId, playerIndex } = data;
-        let res = await roomService.blockPlayer(roomId, playerIndex);
+        // NOTE: check socket là chủ room
+        let res = await roomService.blockPlayer(socket, roomId, playerIndex);
         if (res.message === 'success') {
-            console.log('block room', res.room);
+            //console.log('block room', res.room);
             _io.in(roomId).emit(constant.WAIT_ROOM_SEND_DATA, res);
         }
         else socket.emit(constant.WAIT_ROOM_SEND_DATA, res);
     });
     socket.on(constant.ROOM_OWNER_UNLOCK_PLAYER, async (data) => {
         const { roomId, playerIndex } = data;
-        let res = await roomService.unlockPlayer(roomId, playerIndex);
+        // NOTE: check socket là chủ room
+        let res = await roomService.unlockPlayer(socket, roomId, playerIndex);
         if (res.message === 'success') {
             _io.in(roomId).emit(constant.WAIT_ROOM_SEND_DATA, res);
         }
@@ -102,7 +109,8 @@ module.exports = function (socket) {
     });
     socket.on(constant.ROOM_OWNER_CHANGE_TYPE_PLAYER, async (data) => {
         const { roomId, playerIndex, type } = data;
-        let res = await roomService.changeTypePlayer(roomId, playerIndex, type);
+        // NOTE: check socket là chủ room
+        let res = await roomService.changeTypePlayer(socket, roomId, playerIndex, type);
         if (res.message === 'success') {
             _io.in(roomId).emit(constant.WAIT_ROOM_SEND_DATA, res);
         }
@@ -110,7 +118,7 @@ module.exports = function (socket) {
     });
     socket.on(constant.ROOM_OWNER_KICK_PLAYER, async (data) => {
         const { roomId, playerIndex } = data;
-        let res = await roomService.kickPlayer(roomId, playerIndex);
+        let res = await roomService.kickPlayer(socket, roomId, playerIndex);
         const kickSocketId = res?.kickSocketId;
         if (res.message === 'success' && kickSocketId !== undefined) {
             _io.to(kickSocketId).emit(constant.WAIT_ROOM_SEND_PLAYER_KICK, res);
@@ -118,5 +126,51 @@ module.exports = function (socket) {
             // _io.to(kickSocketId).leave(roomId);
         }
         else socket.emit(constant.WAIT_ROOM_SEND_DATA, res);
+    });
+    socket.on(constant.CLIENT_START_GAME, async () => {
+        const data = await playerService.getInfo(socket.id);
+        if (data.message === 'success') {
+            const { player } = data;
+            let res = await roomService.startGame(socket, player.roomId);
+            //console.log(res);
+            if (res.message === 'success') {
+                _io.to(player.roomId).emit(constant.SERVER_START_GAME, res);
+
+
+                await helpers.delay(3000);
+
+                // xử lý trường hợp máy quay đầu tiên
+                const { currentTurn, dice } = res.room.dataBoard;
+                if (currentTurn.socketId === null && dice === null) {
+                    // xử lý trường hợp máy quay ra 6
+                    while (1) {
+                        let machineRes = await roomService.solve(null, player.roomId);
+
+                        _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, machineRes);
+                        // máy random nước đi
+                        if (machineRes.message === 'success') {
+                            await helpers.delay(3000);
+                            const { cases, dice } = machineRes.room.dataBoard;
+                            if (cases.length === 0) {
+                                let newRes = await roomService.selectPath(null, player.roomId, null);
+                                _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, newRes);
+                            }
+                            else {
+                                let r = helpers.random(0, cases.length - 1);
+                                let newRes = await roomService.selectPath(null, player.roomId, r);
+                                _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, newRes);
+                            }
+                            if (dice !== 6) break;
+                        }
+                        else {
+                            // player là máy bị đơ
+                            throw e;
+                        }
+                    }
+                }
+            }
+            else socket.emit(constant.SERVER_START_GAME, res);
+        }
+
     });
 }

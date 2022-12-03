@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const utils = require('../../services/utils');
+const helpers = require('../../utils/helpers');
 
 const RoomSchema = new Schema({
     players: {
@@ -38,9 +38,12 @@ const RoomSchema = new Schema({
         ]
     },
     owner: {
-        type: String,
+        type: Object,
         required: true,
-        trim: true
+        default: {
+            username: null,
+            socketId: null
+        }
     },
     play: {
         type: Boolean,
@@ -49,8 +52,8 @@ const RoomSchema = new Schema({
     },
     dataBoard: {
         type: Object,
-        required: true,
-        default: utils.getDefaultBoard()
+        require: true,
+        default: {}
     },
 }, { timestamps: true }, { collection: 'room' }
 );

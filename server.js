@@ -27,7 +27,7 @@ _io.on('connection', async (socket) => {
 	const sockets = await _io.fetchSockets()
 	socket.emit(constant.SERVER_SEND_NUMBER_OF_PLAYERS, sockets.length);
 	require('./socket/waitRoom')(socket);
-
+	require('./socket/playRoom')(socket);
 	socket.on('disconnect', async () => {
 		console.log('disconnect', socket.id);
 	})
