@@ -137,7 +137,7 @@ module.exports = function (socket) {
                 _io.to(player.roomId).emit(constant.SERVER_START_GAME, res);
 
 
-                //await helpers.delay(1000);
+                //await helpers.delay(constant.DELAY);
 
                 // xử lý trường hợp máy quay đầu tiên
                 const { currentTurn, dice } = res.room.dataBoard;
@@ -145,11 +145,11 @@ module.exports = function (socket) {
                     // xử lý trường hợp máy quay ra 6
                     while (1) {
                         let machineRes = await roomService.solve(null, player.roomId);
-                        await helpers.delay(1000);
+                        await helpers.delay(constant.DELAY);
                         _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, machineRes);
                         // máy random nước đi
                         if (machineRes.message === 'success') {
-                            await helpers.delay(1000);
+                            await helpers.delay(constant.DELAY);
                             const { cases, dice } = machineRes.room.dataBoard;
                             if (cases.length === 0) {
                                 let newRes = await roomService.selectPath(null, player.roomId, null);

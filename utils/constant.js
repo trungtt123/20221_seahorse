@@ -15,7 +15,7 @@ const RED_DOOR = 0;
 const BLUE_DOOR = 14;
 const GREEN_DOOR = 28;
 const YELLOW_DOOR = 42;
-
+const DELAY = 1000;
 //all
 //client
 const CLIENT_GET_INFO = 'client get info';
@@ -107,5 +107,6 @@ module.exports = {
     SERVER_START_GAME,
     CLIENT_SPIN,
     PLAY_ROOM_SEND_DATA,
-    CLIENT_SELECT_PATH
+    CLIENT_SELECT_PATH,
+    DELAY
 }

@@ -10,7 +10,7 @@ module.exports = function (socket) {
             let res = await roomService.solve(socket, player.roomId);
             if (res.message === 'success') {
                 _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, res);
-                await helpers.delay(1000);
+                await helpers.delay(constant.DELAY);
                 // xử lý trường hợp quay xong không có lượt đi
                 if (res.room.dataBoard.cases.length === 0) {
                     let resNoPath = await roomService.selectPath(socket, player.roomId, null);
@@ -23,11 +23,11 @@ module.exports = function (socket) {
                         // xử lý trường hợp máy quay ra 6
                         while (1) {
                             let machineRes = await roomService.solve(null, player.roomId);
-                            await helpers.delay(1000);
+                            await helpers.delay(constant.DELAY);
                             _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, machineRes);
                             // máy random nước đi
                             if (machineRes.message === 'success') {
-                                await helpers.delay(1000);
+                                await helpers.delay(constant.DELAY);
                                 const { cases, dice } = machineRes.room.dataBoard;
                                 if (cases.length === 0) {
                                     let newRes = await roomService.selectPath(null, player.roomId, null);
@@ -68,11 +68,11 @@ module.exports = function (socket) {
                 // xử lý trường hợp máy quay ra 6
                 while (1) {
                     let machineRes = await roomService.solve(null, player.roomId);
-                    await helpers.delay(1000);
+                    await helpers.delay(constant.DELAY);
                     _io.to(player.roomId).emit(constant.PLAY_ROOM_SEND_DATA, machineRes);
                     // máy random nước đi
                     if (machineRes.message === 'success') {
-                        await helpers.delay(1000);
+                        await helpers.delay(constant.DELAY);
                         const { cases, dice } = machineRes.room.dataBoard;
                         if (cases.length === 0) {
                             let newRes = await roomService.selectPath(null, player.roomId, null);
